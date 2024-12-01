@@ -1,0 +1,63 @@
+local KeyGuardLibrary = loadstring(game:HttpGet("https://cdn.keyguardian.org/library/v1.0.0.lua"))()
+local trueData = "36935b5c9ddc4b20a3d3f66a5d3c9a60"
+local falseData = "5a4d4035a10b4138918a1bce9a47a3e3"
+
+KeyGuardLibrary.Set({
+  publicToken = "0fdf0bf806cc4b398595fe6e1290a647",
+  privateToken = "f8c571ff34e0412e90c7ac599b3f500c",
+  trueData = trueData,
+  falseData = falseData,
+})
+
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local key = ""
+
+local Window = Fluent:CreateWindow({
+    Title = "Key System",
+    SubTitle = "Sandra",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 340),
+    Acrylic = true,
+    Theme = "Aqua",
+    MinimizeKey = Enum.KeyCode.LeftAlt
+})
+
+local Tabs = {
+    KeySys = Window:AddTab({ Title = "Key System", Icon = "key" }),
+}
+
+local Entkey = Tabs.KeySys:AddInput("Input", {
+    Title = "Enter Key",
+    Description = "Enter Key Here",
+    Default = "",
+    Placeholder = "Enter key…",
+    Numeric = false,
+    Finished = false,
+    Callback = function(Value)
+        key = Value
+    end
+})
+
+local Checkkey = Tabs.KeySys:AddButton({
+    Title = "Check Key",
+    Description = "Enter Key before pressing this button",
+    Callback = function()
+        local response = KeyGuardLibrary.validateDefaultKey(key)
+        if response == trueData then
+           print("Key is valid")
+           -- Your code here
+        else
+           print("Key is invalid")
+        end
+    end
+})
+
+local Getkey = Tabs.KeySys:AddButton({
+    Title = "Get Key",
+    Description = "Get Key here",
+    Callback = function()
+       setclipboard(KeyGuardLibrary.getLink())
+    end
+})
+
+Window:SelectTab(1)
