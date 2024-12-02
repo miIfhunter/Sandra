@@ -4,7 +4,8 @@ local Config = {
     BoxOutline        = false,
     BoxColor          = Color3.fromRGB(255,255,255),
     BoxOutlineColor   = Color3.fromRGB(0,0,0),
-    BoxTransparency    = 0.5, -- Новая настройка для прозрачности бокса
+    BoxTransparency    = 0.5, -- Прозрачность бокса
+    OutlineTransparency = 0.5, -- Прозрачность контура
     HealthBar         = false,
     HealthBarSide     = "Left", -- Left,Bottom,Right
     Names             = false,
@@ -31,6 +32,7 @@ function CreateEsp(Player)
                 Box.Thickness = 1
                 Box.ZIndex = 69
                 Box.Transparency = Config.BoxTransparency -- Установка прозрачности бокса
+                Box.Filled = false -- Установка на false, чтобы Box был контуром
 
                 if Config.BoxOutline then
                     BoxOutline.Visible = IsVisible
@@ -39,6 +41,8 @@ function CreateEsp(Player)
                     BoxOutline.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
                     BoxOutline.Thickness = 3
                     BoxOutline.ZIndex = 1
+                    BoxOutline.Filled = true -- Установка на true, чтобы BoxOutline был заполнен
+                    BoxOutline.Transparency = Config.OutlineTransparency -- Установка прозрачности контура
                 else
                     BoxOutline.Visible = false
                 end
