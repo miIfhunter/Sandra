@@ -60,4 +60,15 @@ local Getkey = Tabs.KeySys:AddButton({
     end
 })
 
+local section = Tabs.KeySys:AddSection("HOW GET KEY VIDEO TUTORIAL")
+
+local GetDiscord = Tabs.KeySys:AddButton({
+    Title = "In Discord server",
+    Description = "how to get key",
+    Callback = function()
+       setclipboard(https://discord.gg/zPdN2rNdCr)
+    end
+})
+
+
 Window:SelectTab(1)
