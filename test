@@ -1,0 +1,58 @@
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/insanedude59/SplixUiLib/main/Main"))()
+
+local KeyGuardLibrary = loadstring(game:HttpGet("https://cdn.keyguardian.org/library/v1.0.0.lua"))()
+local trueData = "0ff6066d32dc42439858e8d5f6ff6843"
+local falseData = "a4a4191895334214982ba50bf0bf8df7"
+
+
+
+
+
+local window = library:new({textsize = 13.5,font = Enum.Font.RobotoMono,name = "Sandra",color = Color3.fromRGB(225,58,81)})
+
+local tab = window:page({name = "Key"})
+
+local section1 = tab:section({name = "section1",side = "left",size = 250})
+
+KeyGuardLibrary.Set({
+	publicToken = "0fdf0bf806cc4b398595fe6e1290a647",
+	privateToken = "f8c571ff34e0412e90c7ac599b3f500c",
+	trueData = trueData,
+	falseData = falseData,
+  })
+  
+  local key = ""
+
+
+
+
+section1:textbox({name = "Enter your key",def = "default text",placeholder = "Enter Key",callback = function(Value)
+	key = Value
+ end})
+
+section1:button({name = "Check key",callback = function()
+    local response = KeyGuardLibrary.validateDefaultKey(key)
+    if response == trueData then 
+        print("Key is valid")
+     else
+        print("Key is invalid")
+     end
+end})
+
+section1:button({name = "Get key",callback = function()
+	setclipboard(KeyGuardLibrary.getLink())
+ end})
+
+-- for dropdowns put max to the number of items u have in the opions
+
+
+
+
+
+section1:keybind({name = "set ui keybind",def = nil,callback = function(key)
+   window.key = key
+end})
+
+local picker = section1:colorpicker({name = "color",cpname = nil,def = Color3.fromRGB(255,255,255),callback = function(value)
+   color = value
+end})
