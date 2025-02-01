@@ -66,7 +66,7 @@ local GetDiscord = Tabs.KeySys:AddButton({
     Title = "In Discord server",
     Description = "how to get key",
     Callback = function()
-       setclipboard(https://discord.gg/zPdN2rNdCr)
+       setclipboard("https://discord.gg/zPdN2rNdCr")
     end
 })
 
