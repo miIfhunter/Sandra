@@ -1,0 +1,183 @@
+--[ UIK Library ]--
+local UIK = {}
+UIK.__index = UIK
+
+function UIK.new()
+    local self = setmetatable({}, UIK)
+    return self
+end
+
+-- Настройки окна
+function UIK:settings(config)
+    self.config = {
+        Title = config.Title or "UIK",
+        Discord = config.Discord or false,
+        DiscordLink = config.DiscordLink or "https://discord.gg/example"
+    }
+    return self
+end
+
+-- Создание GUI
+function UIK:CreateGUI()
+    -- Основное окно
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 400, 0, 300)
+    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
+    
+    -- Скругление углов
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = mainFrame
+    
+    -- Заголовок
+    local title = Instance.new("TextLabel")
+    title.Text = self.config.Title
+    title.Size = UDim2.new(1, 0, 0, 50)
+    title.Position = UDim2.new(0, 0, 0, 0)
+    title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.Font = Enum.Font.SourceSansBold
+    title.TextSize = 20
+    title.Parent = mainFrame
+    
+    -- Поле для ввода ключа
+    local keyBox = Instance.new("TextBox")
+    keyBox.PlaceholderText = "Введите ключ..."
+    keyBox.Size = UDim2.new(0.8, 0, 0, 40)
+    keyBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+    keyBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyBox.Font = Enum.Font.SourceSans
+    keyBox.TextSize = 18
+    keyBox.Parent = mainFrame
+    
+    -- Кнопка активации
+    local activateButton = Instance.new("TextButton")
+    activateButton.Text = "Активировать"
+    activateButton.Size = UDim2.new(0.8, 0, 0, 40)
+    activateButton.Position = UDim2.new(0.1, 0, 0.4, 0)
+    activateButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    activateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    activateButton.Font = Enum.Font.SourceSansBold
+    activateButton.TextSize = 18
+    activateButton.Parent = mainFrame
+    
+    -- Кнопка Discord (если включена)
+    if self.config.Discord then
+        local discordButton = Instance.new("TextButton")
+        discordButton.Text = "Наш Discord"
+        discordButton.Size = UDim2.new(0.8, 0, 0, 40)
+        discordButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+        discordButton.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+        discordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        discordButton.Font = Enum.Font.SourceSansBold
+        discordButton.TextSize = 18
+        discordButton.Parent = mainFrame
+        
+        discordButton.MouseButton1Click:Connect(function()
+            setclipboard(self.config.DiscordLink)
+            self:ShowNotification("Ссылка скопирована!", Color3.fromRGB(0, 255, 0))
+        end)
+    end
+    
+    -- Уведомления
+    local notification = Instance.new("TextLabel")
+    notification.Text = ""
+    notification.Size = UDim2.new(0.8, 0, 0, 30)
+    notification.Position = UDim2.new(0.1, 0, 0.8, 0)
+    notification.BackgroundTransparency = 1
+    notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+    notification.Font = Enum.Font.SourceSans
+    notification.TextSize = 16
+    notification.Parent = mainFrame
+    
+    -- Обработка кнопки активации
+    activateButton.MouseButton1Click:Connect(function()
+        local key = keyBox.Text
+        if self:ValidateKey(key) then
+            self:ShowNotification("Успешная авторизация!", Color3.fromRGB(0, 255, 0))
+            screenGui:Destroy()
+            self:LoadMainGUI()
+        else
+            self:ShowNotification("Неверный ключ!", Color3.fromRGB(255, 0, 0))
+        end
+    end)
+end
+
+-- Валидация ключа (заглушка, можно заменить на KeyGuardian)
+function UIK:ValidateKey(key)
+    -- Здесь можно добавить проверку через KeyGuardian или локальные ключи
+    return key == "test123"
+end
+
+-- Уведомления
+function UIK:ShowNotification(message, color)
+    local notification = Instance.new("TextLabel")
+    notification.Text = message
+    notification.Size = UDim2.new(0.8, 0, 0, 30)
+    notification.Position = UDim2.new(0.1, 0, 0.9, 0)
+    notification.BackgroundTransparency = 1
+    notification.TextColor3 = color
+    notification.Font = Enum.Font.SourceSans
+    notification.TextSize = 16
+    notification.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("ScreenGui").Frame
+    
+    task.delay(3, function()
+        notification:Destroy()
+    end)
+end
+
+-- Загрузка основного GUI
+function UIK:LoadMainGUI()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 400, 0, 300)
+    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
+    
+    local title = Instance.new("TextLabel")
+    title.Text = "Основное меню"
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.Position = UDim2.new(0, 0, 0, 0)
+    title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.Font = Enum.Font.SourceSansBold
+    title.TextSize = 20
+    title.Parent = mainFrame
+    
+    local testButton = Instance.new("TextButton")
+    testButton.Text = "Тестовая функция"
+    testButton.Size = UDim2.new(0.8, 0, 0, 40)
+    testButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+    testButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    testButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    testButton.Font = Enum.Font.SourceSansBold
+    testButton.TextSize = 18
+    testButton.Parent = mainFrame
+    
+    testButton.MouseButton1Click:Connect(function()
+        print("Функция активирована!")
+    end)
+end
+
+-- Пример использования
+local uik = UIK.new()
+uik:settings({
+    Title = "Example",
+    Discord = true,
+    DiscordLink = "https://discord.gg/your_invite"
+})
+
+uik:CreateGUI()
