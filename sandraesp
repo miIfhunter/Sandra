@@ -1,0 +1,102 @@
+--// Variables
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local localPlayer = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local cache = {}
+
+local bones = {
+    {"Head", "UpperTorso"},
+    {"UpperTorso", "RightUpperArm"},
+    {"RightUpperArm", "RightLowerArm"},
+    {"RightLowerArm", "RightHand"},
+    {"UpperTorso", "LeftUpperArm"},
+    {"LeftUpperArm", "LeftLowerArm"},
+    {"LeftLowerArm", "LeftHand"},
+    {"UpperTorso", "LowerTorso"},
+    {"LowerTorso", "LeftUpperLeg"},
+    {"LeftUpperLeg", "LeftLowerLeg"},
+    {"LeftLowerLeg", "LeftFoot"},
+    {"LowerTorso", "RightUpperLeg"},
+    {"RightUpperLeg", "RightLowerLeg"},
+    {"RightLowerLeg", "RightFoot"}
+}
+
+--// Settings
+local ESP_SETTINGS = {
+    SkeletonsColor = Color3.new(1, 1, 1),
+    ShowSkeletons = true,
+    -- Другие настройки...
+}
+
+local function createEsp(player)
+    local esp = {
+        skeletonLines = {},
+        -- Другие элементы...
+    }
+    cache[player] = esp
+end
+
+local function updateEsp()
+    for player, esp in pairs(cache) do
+        -- Предыдущие проверки...
+
+        if rootPart and head and humanoid and shouldShow then
+            local position, onScreen = camera:WorldToViewportPoint(rootPart.Position)
+            if onScreen then
+                -- Обработка других элементов ESP...
+
+                -- Секция скелетона
+                if ESP_SETTINGS.ShowSkeletons and ESP_SETTINGS.Enabled then
+                    -- Удаляем старые линии
+                    for _, line in ipairs(esp.skeletonLines) do
+                        line:Remove()
+                    end
+                    esp.skeletonLines = {}
+
+                    -- Создаем новые линии для видимых костей
+                    for _, bonePair in ipairs(bones) do
+                        local parentName, childName = bonePair[1], bonePair[2]
+                        local parent = character:FindFirstChild(parentName)
+                        local child = character:FindFirstChild(childName)
+                        
+                        if parent and child then
+                            local parentPos = camera:WorldToViewportPoint(parent.Position)
+                            local childPos = camera:WorldToViewportPoint(child.Position)
+                            
+                            if parentPos.Z > 0 and childPos.Z > 0 then
+                                local line = create("Line", {
+                                    Thickness = 1,
+                                    Color = ESP_SETTINGS.SkeletonsColor,
+                                    Transparency = 1,
+                                    Visible = true
+                                })
+                                line.From = Vector2.new(parentPos.X, parentPos.Y)
+                                line.To = Vector2.new(childPos.X, childPos.Y)
+                                table.insert(esp.skeletonLines, line)
+                            end
+                        end
+                    end
+                else
+                    -- Очищаем линии если опция выключена
+                    for _, line in ipairs(esp.skeletonLines) do
+                        line:Remove()
+                    end
+                    esp.skeletonLines = {}
+                end
+
+            else
+                -- Скрываем линии вне экрана
+                for _, line in ipairs(esp.skeletonLines) do
+                    line.Visible = false
+                end
+            end
+        else
+            -- Очищаем линии если персонаж не валиден
+            for _, line in ipairs(esp.skeletonLines) do
+                line:Remove()
+            end
+            esp.skeletonLines = {}
+        end
+    end
+end
