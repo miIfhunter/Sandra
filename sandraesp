@@ -46,6 +46,11 @@ local ESP_SETTINGS = {
     TracerThickness = 2,
     SkeletonsColor = Color3.new(1, 1, 1),
     TracerPosition = "Bottom",
+    RoleColors = {
+        Murderer = Color3.fromRGB(255, 0, 0),
+        Sheriff = Color3.fromRGB(0, 150, 255),
+        Survivor = Color3.fromRGB(255, 255, 255)
+    }
 }
 
 local function create(class, properties)
@@ -104,6 +109,37 @@ local function createEsp(player)
     cache[player]["skeletonlines"] = {}
 end
 
+local function getPlayerRole(player)
+    local character = player.Character
+    if not character then return "Survivor" end
+
+    for _, item in pairs(player.Backpack:GetChildren()) do
+        if item:IsA("Tool") then
+            local toolName = item.Name:lower()
+            if toolName:find("gun") or toolName:find("revolver") then
+                return "Sheriff"
+            elseif toolName:find("knife") or toolName:find("blade") then
+                return "Murderer"
+            end
+        end
+    end
+
+    -- Также проверим, если оружие уже в руках
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid and humanoid:FindFirstChildOfClass("Tool") then
+        local tool = humanoid:FindFirstChildOfClass("Tool")
+        local toolName = tool.Name:lower()
+        if toolName:find("gun") or toolName:find("revolver") then
+            return "Sheriff"
+        elseif toolName:find("knife") or toolName:find("blade") then
+            return "Murderer"
+        end
+    end
+
+    return "Survivor"
+end
+
+
 local function isPlayerBehindWall(player)
     local character = player.Character
     if not character then
@@ -133,6 +169,8 @@ local function removeEsp(player)
 end
 
 local function updateEsp()
+    local role = getPlayerRole(player)
+local roleColor = ESP_SETTINGS.RoleColors[role]
     for player, esp in pairs(cache) do
         local character, team = player.Character, player.Team
         if character and (not ESP_SETTINGS.Teamcheck or (team and team ~= localPlayer.Team)) then
@@ -254,6 +292,11 @@ local function updateEsp()
                             esp.boxOutline.Visible = false
                         end
                     else
+                        esp.box.Color = roleColor
+                        esp.name.Color = roleColor
+                        for _, line in ipairs(esp.boxLines) do
+                        line.Color = roleColor
+                            end
                         esp.box.Visible = false
                         esp.boxOutline.Visible = false
                         for _, line in ipairs(esp.boxLines) do
