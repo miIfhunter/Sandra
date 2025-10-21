@@ -2,4 +2,6 @@ if game.PlaceId == 16732694052 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/miIfhunter/Sandra/refs/heads/main/%231SC"))() -- fisch
 elseif game.PlaceId == 3101667897 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/miIfhunter/Sandra/refs/heads/main/2%23SC"))() -- legend of speed
+elseif game.PlaceId == 301549746 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/miIfhunter/Sandra/refs/heads/main/cb"))()
 end
